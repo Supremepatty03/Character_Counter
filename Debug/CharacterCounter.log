@@ -1,0 +1,9 @@
+﻿  main.cpp
+  ConsoleApplication.cpp
+  CountingStrategyFactory.cpp
+  CharacterData.cpp
+  FileService.cpp
+  UnorderedMapCountingStrategy.cpp
+  Utf8Converter.cpp
+  Создание кода...
+  CharacterCounter.vcxproj -> D:\c++projects\CharacterCounter\Debug\CharacterCounter.exe

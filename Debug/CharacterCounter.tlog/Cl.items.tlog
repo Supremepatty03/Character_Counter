@@ -1,0 +1,7 @@
+D:\c++projects\CharacterCounter\main.cpp;D:\c++projects\CharacterCounter\Debug\main.obj
+D:\c++projects\CharacterCounter\application\ConsoleApplication.cpp;D:\c++projects\CharacterCounter\Debug\ConsoleApplication.obj
+D:\c++projects\CharacterCounter\factory\CountingStrategyFactory.cpp;D:\c++projects\CharacterCounter\Debug\CountingStrategyFactory.obj
+D:\c++projects\CharacterCounter\model\CharacterData.cpp;D:\c++projects\CharacterCounter\Debug\CharacterData.obj
+D:\c++projects\CharacterCounter\service\FileService.cpp;D:\c++projects\CharacterCounter\Debug\FileService.obj
+D:\c++projects\CharacterCounter\strategy\UnorderedMapCountingStrategy.cpp;D:\c++projects\CharacterCounter\Debug\UnorderedMapCountingStrategy.obj
+D:\c++projects\CharacterCounter\utils\Utf8Converter.cpp;D:\c++projects\CharacterCounter\Debug\Utf8Converter.obj

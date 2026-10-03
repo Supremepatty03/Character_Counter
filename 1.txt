@@ -1,0 +1,15 @@
+CHARACTER_COUNTER_DATA
+
+TEXT
+dgsaaswgGSDYSWRE3523ЫВАФЕПРпврыр
+
+SYMBOLS
+3
+№
+ы
+S
+
+RESULT
+№ 0
+ы 1
+S 2

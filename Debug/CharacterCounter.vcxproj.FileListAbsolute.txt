@@ -1,0 +1,2 @@
+C:\Users\User\Downloads\CharacterCounter (1)\CharacterCounter\Debug\CharacterCounter.exe
+D:\c++projects\CharacterCounter\Debug\CharacterCounter.exe

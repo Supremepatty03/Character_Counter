@@ -1,0 +1,15 @@
+CHARACTER_COUNTER_DATA
+
+TEXT
+Привет, мир!
+
+SYMBOLS
+3
+и
+р
+!
+
+RESULT
+и 1
+р 2
+! 1
