@@ -1,31 +1,32 @@
 #include "CharacterData.h"
+using namespace std;
 
 CharacterData::CharacterData(
-    const std::wstring& text,
-    const std::vector<wchar_t>& symbols
+    const wstring& text,
+    const vector<wchar_t>& symbols
 )
     : text_(text),
       symbols_(symbols)
 {
 }
 
-const std::wstring& CharacterData::GetText() const
+const wstring& CharacterData::GetText() const
 {
     return text_;
 }
 
-const std::vector<wchar_t>& CharacterData::GetSymbols() const
+const vector<wchar_t>& CharacterData::GetSymbols() const
 {
     return symbols_;
 }
 
-void CharacterData::SetText(const std::wstring& text)
+void CharacterData::SetText(const wstring& text)
 {
     text_ = text;
 }
 
 void CharacterData::SetSymbols(
-    const std::vector<wchar_t>& symbols
+    const vector<wchar_t>& symbols
 )
 {
     symbols_ = symbols;

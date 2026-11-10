@@ -1,11 +1,12 @@
 #include "UnorderedMapCountingStrategy.h"
+using namespace std;
 
-std::unordered_map<wchar_t, int>
+unordered_map<wchar_t, int>
 UnorderedMapCountingStrategy::Count(
     const CharacterData& data
 ) const
 {
-    std::unordered_map<wchar_t, int> result;
+    unordered_map<wchar_t, int> result;
 
     for (wchar_t symbol : data.GetSymbols())
     {

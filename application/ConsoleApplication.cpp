@@ -7,6 +7,19 @@
 #include <limits>
 #include <stdexcept>
 
+using namespace std;
+
+namespace
+{
+    enum class MenuCommand
+    {
+        Exit,
+        EnterSourceData,
+        LoadSourceData,
+        SaveData
+    };
+}
+
 ConsoleApplication::ConsoleApplication()
     : countingStrategy_(CountingStrategyFactory::Create()),
       hasSourceData_(false),
@@ -17,67 +30,73 @@ ConsoleApplication::ConsoleApplication()
 void ConsoleApplication::Run()
 {
     bool isRunning = true;
-
+    ShowGreeting ();
     while (isRunning)
     {
         ShowMenu();
 
-        std::wstring command;
-        std::getline(std::wcin, command);
+        wstring command;
+        getline(wcin, command);
 
         try
         {
-            if (command == L"1")
+            if (command == to_wstring(static_cast<int>(MenuCommand::EnterSourceData)))
             {
                 EnterSourceData();
             }
-            else if (command == L"2")
+            else if (command == to_wstring(static_cast<int>(MenuCommand::LoadSourceData)))
             {
                 LoadSourceData();
             }
-            else if (command == L"3")
+            else if (command == to_wstring(static_cast<int>(MenuCommand::SaveData)))
             {
                 SaveData();
             }
-            else if (command == L"0")
+            else if (command == to_wstring(static_cast<int>(MenuCommand::Exit)))
             {
                 isRunning = false;
             }
             else
             {
-                std::wcout << L"Неизвестная команда.\n";
+                wcout << L"Неизвестная команда.\n";
             }
         }
-        catch (const std::exception& exception)
+        catch (const exception& exception)
         {
-            const std::string message = exception.what();
-            const std::wstring wideMessage =
+            const string message = exception.what();
+            const wstring wideMessage =
                 Utf8Converter::ToWide(message);
 
-            std::wcout
+            wcout
                 << L"Ошибка: "
                 << wideMessage
                 << L'\n';
         }
 
-        std::wcout << L'\n';
+        wcout << L'\n';
     }
 }
 
 void ConsoleApplication::ShowGreeting() const {
-    std::wcout << "Лабораторная работа №1, вариант №2.\n";
-    std::wcout << "Исполнители: Тарасов Артем, Александрычева Алена гр.433\n";
+    wcout << L"Лабораторная работа №1, вариант №2.\n";
+    wcout << L"Задан текст. Задано множество из N символов. Подсчитать количество\n";
+    wcout << L"вхождений в тексте каждого из символов массива.\n";
+    wcout << L"Исполнители: Тарасов Артем, Александрычева Алена гр.433\n\n";
 }
 void ConsoleApplication::ShowMenu() const
 {
-    std::wcout
+    wcout
         << L"==============================\n"
         << L"  ПОДСЧЕТ ВХОЖДЕНИЙ СИМВОЛОВ\n"
         << L"==============================\n"
-        << L"1. Ввести исходные данные\n"
-        << L"2. Загрузить исходные данные из файла\n"
-        << L"3. Сохранить данные и результат в файл\n"
-        << L"0. Выход\n"
+        << to_wstring(static_cast<int>(MenuCommand::EnterSourceData))
+        << L". Ввести исходные данные\n"
+        << to_wstring(static_cast<int>(MenuCommand::LoadSourceData))
+        << L". Загрузить исходные данные из файла\n"
+        << to_wstring(static_cast<int>(MenuCommand::SaveData))
+        << L". Сохранить данные и результат в файл\n"
+        << to_wstring(static_cast<int>(MenuCommand::Exit))
+        << L". Выход\n"
         << L"==============================\n"
         << L"Выберите пункт: ";
 }
@@ -90,7 +109,7 @@ void ConsoleApplication::EnterSourceData()
     hasResult_ = false;
     result_.clear();
 
-    std::wcout
+    wcout
         << L"\nИсходные данные успешно введены.\n";
 
     CalculateAndShowResult();
@@ -98,7 +117,7 @@ void ConsoleApplication::EnterSourceData()
 
 void ConsoleApplication::LoadSourceData()
 {
-    const std::wstring filePath = RequestFilePath();
+    const wstring filePath = RequestFilePath();
 
     sourceData_ = fileService_.LoadSourceData(filePath);
 
@@ -106,7 +125,7 @@ void ConsoleApplication::LoadSourceData()
     hasResult_ = false;
     result_.clear();
 
-    std::wcout
+    wcout
         << L"\nИсходные данные успешно загружены.\n";
 
     CalculateAndShowResult();
@@ -116,17 +135,17 @@ void ConsoleApplication::SaveData()
 {
     if (!HasSourceData() || !HasResult())
     {
-        std::wcout << L"Нет данных для сохранения.\n";
+        wcout << L"Нет данных для сохранения.\n";
         return;
     }
 
-    std::wcout
+    wcout
         << L"Введите полный путь для сохранения данных: ";
 
-    std::wstring filePath;
-    std::getline(std::wcin, filePath);
+    wstring filePath;
+    getline(wcin, filePath);
 
-    const std::wstring preparedPath =
+    const wstring preparedPath =
         fileService_.PrepareSavePath(filePath);
 
     fileService_.SaveData(
@@ -135,7 +154,7 @@ void ConsoleApplication::SaveData()
         preparedPath
     );
 
-    std::wcout
+    wcout
         << L"Исходные данные и результат успешно сохранены.\n";
 }
 
@@ -159,26 +178,26 @@ void ConsoleApplication::ShowResult() const
         return;
     }
 
-    std::wcout
+    wcout
         << L"\n==============================\n"
         << L"РЕЗУЛЬТАТ\n"
         << L"==============================\n";
 
-    std::wcout
+    wcout
         << L"Исходный текст:\n"
         << sourceData_.GetText()
         << L"\n\n";
 
-    std::wcout
+    wcout
         << L"Множество символов:\n";
 
     for (wchar_t symbol : sourceData_.GetSymbols())
     {
-        std::wcout << L"'" << symbol << L"' ";
+        wcout << L"'" << symbol << L"' ";
     }
 
-    std::wcout << L"\n\n";
-    std::wcout << L"Количество вхождений:\n";
+    wcout << L"\n\n";
+    wcout << L"Количество вхождений:\n";
 
     for (wchar_t symbol : sourceData_.GetSymbols())
     {
@@ -186,14 +205,14 @@ void ConsoleApplication::ShowResult() const
 
         if (iterator != result_.end())
         {
-            std::wcout
+            wcout
                 << L"'" << symbol << L"' -> "
                 << iterator->second
                 << L'\n';
         }
     }
 
-    std::wcout
+    wcout
         << L"==============================\n";
 }
 
@@ -209,67 +228,67 @@ bool ConsoleApplication::HasResult() const
 
 CharacterData ConsoleApplication::ReadSourceDataFromConsole() const
 {
-    std::wcout << L"Введите текст:\n";
+    wcout << L"Введите текст:\n";
 
-    std::wstring text;
-    std::getline(std::wcin, text);
+    wstring text;
+    getline(wcin, text);
 
-    std::wcout
+    wcout
         << L"Введите количество символов множества: ";
 
     int symbolsCount = 0;
 
-    if (!(std::wcin >> symbolsCount))
+    if (!(wcin >> symbolsCount))
     {
-        std::wcin.clear();
-        std::wcin.ignore(
-            std::numeric_limits<std::streamsize>::max(),
+        wcin.clear();
+        wcin.ignore(
+            numeric_limits<streamsize>::max(),
             L'\n'
         );
 
-        throw std::runtime_error(
+        throw runtime_error(
             "The number of symbols must be an integer."
         );
     }
 
-    std::wcin.ignore(
-        std::numeric_limits<std::streamsize>::max(),
+    wcin.ignore(
+        numeric_limits<streamsize>::max(),
         L'\n'
     );
 
     if (symbolsCount <= 0)
     {
-        throw std::runtime_error(
+        throw runtime_error(
             "The number of symbols must be positive."
         );
     }
 
-    const std::vector<wchar_t> symbols =
+    const vector<wchar_t> symbols =
         ReadSymbols(symbolsCount);
 
     return CharacterData(text, symbols);
 }
 
-std::vector<wchar_t> ConsoleApplication::ReadSymbols(
+vector<wchar_t> ConsoleApplication::ReadSymbols(
     int symbolsCount
 ) const
 {
-    std::vector<wchar_t> symbols;
-    symbols.reserve(static_cast<std::size_t>(symbolsCount));
+    vector<wchar_t> symbols;
+    symbols.reserve(static_cast<size_t>(symbolsCount));
 
     for (int index = 0; index < symbolsCount; ++index)
     {
-        std::wcout
+        wcout
             << L"Введите символ №"
             << index + 1
             << L": ";
 
-        std::wstring symbolLine;
-        std::getline(std::wcin, symbolLine);
+        wstring symbolLine;
+        getline(wcin, symbolLine);
 
         if (symbolLine.size() != 1)
         {
-            throw std::runtime_error(
+            throw runtime_error(
                 "Each input line must contain exactly one character."
             );
         }
@@ -278,7 +297,7 @@ std::vector<wchar_t> ConsoleApplication::ReadSymbols(
         {
             if (existingSymbol == symbolLine[0])
             {
-                throw std::runtime_error(
+                throw runtime_error(
                     "The set must not contain duplicate characters."
                 );
             }
@@ -290,12 +309,12 @@ std::vector<wchar_t> ConsoleApplication::ReadSymbols(
     return symbols;
 }
 
-std::wstring ConsoleApplication::RequestFilePath() const
+wstring ConsoleApplication::RequestFilePath() const
 {
-    std::wcout << L"Введите полный путь к файлу: ";
+    wcout << L"Введите полный путь к файлу: ";
 
-    std::wstring filePath;
-    std::getline(std::wcin, filePath);
+    wstring filePath;
+    getline(wcin, filePath);
 
     return filePath;
 }

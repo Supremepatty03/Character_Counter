@@ -6,7 +6,9 @@
 
 #include <stdexcept>
 
-std::wstring Utf8Converter::ToWide(const std::string& text)
+using namespace std;
+
+wstring Utf8Converter::ToWide(const string& text)
 {
     if (text.empty())
     {
@@ -24,12 +26,12 @@ std::wstring Utf8Converter::ToWide(const std::string& text)
 
     if (wideLength <= 0)
     {
-        throw std::runtime_error(
+        throw runtime_error(
             "Failed to convert UTF-8 to Unicode."
         );
     }
 
-    std::wstring result(wideLength, L'\0');
+    wstring result(wideLength, L'\0');
 
     if (MultiByteToWideChar(
             CP_UTF8,
@@ -40,7 +42,7 @@ std::wstring Utf8Converter::ToWide(const std::string& text)
             wideLength
         ) <= 0)
     {
-        throw std::runtime_error(
+        throw runtime_error(
             "Failed to convert UTF-8 to Unicode."
         );
     }
@@ -48,7 +50,7 @@ std::wstring Utf8Converter::ToWide(const std::string& text)
     return result;
 }
 
-std::string Utf8Converter::ToUtf8(const std::wstring& text)
+string Utf8Converter::ToUtf8(const wstring& text)
 {
     if (text.empty())
     {
@@ -68,12 +70,12 @@ std::string Utf8Converter::ToUtf8(const std::wstring& text)
 
     if (utf8Length <= 0)
     {
-        throw std::runtime_error(
+        throw runtime_error(
             "Failed to convert Unicode to UTF-8."
         );
     }
 
-    std::string result(utf8Length, '\0');
+    string result(utf8Length, '\0');
 
     if (WideCharToMultiByte(
             CP_UTF8,
@@ -86,7 +88,7 @@ std::string Utf8Converter::ToUtf8(const std::wstring& text)
             nullptr
         ) <= 0)
     {
-        throw std::runtime_error(
+        throw runtime_error(
             "Failed to convert Unicode to UTF-8."
         );
     }
@@ -99,15 +101,17 @@ std::string Utf8Converter::ToUtf8(const std::wstring& text)
 #include <codecvt>
 #include <locale>
 
-std::wstring Utf8Converter::ToWide(const std::string& text)
+using namespace std;
+
+wstring Utf8Converter::ToWide(const string& text)
 {
-    std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+    wstring_convert<codecvt_utf8<wchar_t>> converter;
     return converter.from_bytes(text);
 }
 
-std::string Utf8Converter::ToUtf8(const std::wstring& text)
+string Utf8Converter::ToUtf8(const wstring& text)
 {
-    std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+    wstring_convert<codecvt_utf8<wchar_t>> converter;
     return converter.to_bytes(text);
 }
 

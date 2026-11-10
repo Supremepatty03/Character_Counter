@@ -2,8 +2,10 @@
 
 #include "../strategy/UnorderedMapCountingStrategy.h"
 
-std::unique_ptr<ICharacterCountingStrategy>
+using namespace std;
+
+unique_ptr<ICharacterCountingStrategy>
 CountingStrategyFactory::Create()
 {
-    return std::make_unique<UnorderedMapCountingStrategy>();
+    return make_unique<UnorderedMapCountingStrategy>();
 }

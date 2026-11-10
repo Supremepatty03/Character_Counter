@@ -10,78 +10,80 @@
 #include <stdexcept>
 #include <string>
 
+using namespace std;
+
 namespace
 {
-    const std::wstring sourceHeader = L"CHARACTER_COUNTER_DATA";
-    const std::wstring textHeader = L"TEXT";
-    const std::wstring symbolsHeader = L"SYMBOLS";
-    const std::wstring resultHeader = L"RESULT";
+    const wstring sourceHeader = L"CHARACTER_COUNTER_DATA";
+    const wstring textHeader = L"TEXT";
+    const wstring symbolsHeader = L"SYMBOLS";
+    const wstring resultHeader = L"RESULT";
 }
 
 CharacterData FileService::LoadSourceData(
-    const std::wstring& filePath
+    const wstring& filePath
 ) const
 {
-    const std::filesystem::path path(filePath);
-    std::ifstream inputFile(path, std::ios::binary);
+    const filesystem::path path(filePath);
+    ifstream inputFile(path, ios::binary);
 
     if (!inputFile.is_open())
     {
-        throw std::runtime_error(
+        throw runtime_error(
             "Failed to open the file for reading."
         );
     }
 
-    const std::string fileContent(
-        (std::istreambuf_iterator<char>(inputFile)),
-        std::istreambuf_iterator<char>()
+    const string fileContent(
+        (istreambuf_iterator<char>(inputFile)),
+        istreambuf_iterator<char>()
     );
 
-    const std::wstring content = Utf8Converter::ToWide(fileContent);
-    std::wistringstream input(content);
+    const wstring content = Utf8Converter::ToWide(fileContent);
+    wistringstream input(content);
 
-    std::wstring line;
+    wstring line;
 
-    if (!std::getline(input, line) || line != sourceHeader)
+    if (!getline(input, line) || line != sourceHeader)
     {
-        throw std::runtime_error(
+        throw runtime_error(
             "Invalid source file format."
         );
     }
 
-    if (!std::getline(input, line) || !line.empty())
+    if (!getline(input, line) || !line.empty())
     {
-        throw std::runtime_error(
+        throw runtime_error(
             "Invalid source file format."
         );
     }
 
-    if (!std::getline(input, line) || line != textHeader)
+    if (!getline(input, line) || line != textHeader)
     {
-        throw std::runtime_error(
+        throw runtime_error(
             "TEXT section was not found."
         );
     }
 
-    std::wstring text;
+    wstring text;
 
-    if (!std::getline(input, text))
+    if (!getline(input, text))
     {
-        throw std::runtime_error(
+        throw runtime_error(
             "Failed to read the source text."
         );
     }
 
-    if (!std::getline(input, line) || !line.empty())
+    if (!getline(input, line) || !line.empty())
     {
-        throw std::runtime_error(
+        throw runtime_error(
             "Invalid source file format."
         );
     }
 
-    if (!std::getline(input, line) || line != symbolsHeader)
+    if (!getline(input, line) || line != symbolsHeader)
     {
-        throw std::runtime_error(
+        throw runtime_error(
             "SYMBOLS section was not found."
         );
     }
@@ -90,40 +92,40 @@ CharacterData FileService::LoadSourceData(
 
     if (!(input >> symbolsCount))
     {
-        throw std::runtime_error(
+        throw runtime_error(
             "Failed to read the number of symbols."
         );
     }
 
     input.ignore(
-        std::numeric_limits<std::streamsize>::max(),
+        numeric_limits<streamsize>::max(),
         L'\n'
     );
 
     if (symbolsCount <= 0)
     {
-        throw std::runtime_error(
+        throw runtime_error(
             "The number of symbols must be positive."
         );
     }
 
-    std::vector<wchar_t> symbols;
-    symbols.reserve(static_cast<std::size_t>(symbolsCount));
+    vector<wchar_t> symbols;
+    symbols.reserve(static_cast<size_t>(symbolsCount));
 
     for (int index = 0; index < symbolsCount; ++index)
     {
-        std::wstring symbolLine;
+        wstring symbolLine;
 
-        if (!std::getline(input, symbolLine))
+        if (!getline(input, symbolLine))
         {
-            throw std::runtime_error(
+            throw runtime_error(
                 "Failed to read a symbol from the file."
             );
         }
 
         if (symbolLine.size() != 1)
         {
-            throw std::runtime_error(
+            throw runtime_error(
                 "Each set line must contain exactly one character."
             );
         }
@@ -132,7 +134,7 @@ CharacterData FileService::LoadSourceData(
         {
             if (existingSymbol == symbolLine[0])
             {
-                throw std::runtime_error(
+                throw runtime_error(
                     "The set must not contain duplicate characters."
                 );
             }
@@ -146,21 +148,21 @@ CharacterData FileService::LoadSourceData(
 
 void FileService::SaveData(
     const CharacterData& data,
-    const std::unordered_map<wchar_t, int>& result,
-    const std::wstring& filePath
+    const unordered_map<wchar_t, int>& result,
+    const wstring& filePath
 ) const
 {
-    const std::filesystem::path path(filePath);
-    std::ofstream outputFile(path, std::ios::binary);
+    const filesystem::path path(filePath);
+    ofstream outputFile(path, ios::binary);
 
     if (!outputFile.is_open())
     {
-        throw std::runtime_error(
+        throw runtime_error(
             "Failed to open the file for writing."
         );
     }
 
-    std::wstring content;
+    wstring content;
 
     content += sourceHeader + L"\n\n";
 
@@ -168,7 +170,7 @@ void FileService::SaveData(
     content += data.GetText() + L"\n\n";
 
     content += symbolsHeader + L"\n";
-    content += std::to_wstring(data.GetSymbols().size());
+    content += to_wstring(data.GetSymbols().size());
     content += L"\n";
 
     for (wchar_t symbol : data.GetSymbols())
@@ -188,67 +190,67 @@ void FileService::SaveData(
         {
             content += symbol;
             content += L" ";
-            content += std::to_wstring(iterator->second);
+            content += to_wstring(iterator->second);
             content += L"\n";
         }
     }
 
-    const std::string utf8Content =
+    const string utf8Content =
         Utf8Converter::ToUtf8(content);
 
     outputFile.write(
         utf8Content.data(),
-        static_cast<std::streamsize>(utf8Content.size())
+        static_cast<streamsize>(utf8Content.size())
     );
 
     if (!outputFile.good())
     {
-        throw std::runtime_error(
+        throw runtime_error(
             "Failed to write the file."
         );
     }
 }
 
-std::wstring FileService::PrepareSavePath(
-    const std::wstring& initialPath
+wstring FileService::PrepareSavePath(
+    const wstring& initialPath
 ) const
 {
-    std::wstring currentPath = initialPath;
+    wstring currentPath = initialPath;
 
     while (true)
     {
-        if (!std::filesystem::exists(currentPath))
+        if (!filesystem::exists(currentPath))
         {
             if (CanWriteToFile(currentPath))
             {
                 return currentPath;
             }
 
-            std::wcout
+            wcout
                 << L"Не удалось создать файл по указанному пути.\n"
                 << L"Укажите новый путь: ";
 
-            std::getline(std::wcin, currentPath);
+            getline(wcin, currentPath);
             continue;
         }
 
         if (!IsRegularFile(currentPath))
         {
-            std::wcout
+            wcout
                 << L"Указанный путь не является обычным файлом.\n"
                 << L"Укажите новый путь: ";
 
-            std::getline(std::wcin, currentPath);
+            getline(wcin, currentPath);
             continue;
         }
 
         if (!CanWriteToFile(currentPath))
         {
-            std::wcout
+            wcout
                 << L"Файл доступен только для чтения или недоступен для записи.\n"
                 << L"Укажите новый путь: ";
 
-            std::getline(std::wcin, currentPath);
+            getline(wcin, currentPath);
             continue;
         }
 
@@ -257,17 +259,17 @@ std::wstring FileService::PrepareSavePath(
             return currentPath;
         }
 
-        std::wcout << L"Укажите новый путь: ";
-        std::getline(std::wcin, currentPath);
+        wcout << L"Укажите новый путь: ";
+        getline(wcin, currentPath);
     }
 }
 
 bool FileService::CanWriteToFile(
-    const std::wstring& filePath
+    const wstring& filePath
 ) const
 {
-    const std::filesystem::path path(filePath);
-    std::ofstream outputFile(path, std::ios::app);
+    const filesystem::path path(filePath);
+    ofstream outputFile(path, ios::app);
 
     if (!outputFile.is_open())
     {
@@ -279,24 +281,24 @@ bool FileService::CanWriteToFile(
 }
 
 bool FileService::IsRegularFile(
-    const std::wstring& filePath
+    const wstring& filePath
 ) const
 {
-    return std::filesystem::is_regular_file(filePath);
+    return filesystem::is_regular_file(filePath);
 }
 
 bool FileService::AskOverwrite(
-    const std::wstring& filePath
+    const wstring& filePath
 ) const
 {
     while (true)
     {
-        std::wcout
+        wcout
             << L"Файл \"" << filePath << L"\" уже существует.\n"
             << L"Перезаписать файл? (y/n): ";
 
-        std::wstring answer;
-        std::getline(std::wcin, answer);
+        wstring answer;
+        getline(wcin, answer);
 
         if (answer == L"y" || answer == L"Y" ||
             answer == L"д" || answer == L"Д")
@@ -310,6 +312,6 @@ bool FileService::AskOverwrite(
             return false;
         }
 
-        std::wcout << L"Введите y/n или д/н.\n";
+        wcout << L"Введите y/n или д/н.\n";
     }
 }
